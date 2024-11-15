@@ -1,4 +1,4 @@
-bakerydemo
 .envrc
 .vscode
 .direnv
+__pycache__

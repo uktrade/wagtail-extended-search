@@ -7,9 +7,12 @@ license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.13"
+python = "^3.12"
 wagtail = "^6.3"
-
+# OpenSearch
+elasticsearch = "<7.14.0"         # highest version for OpenSearch support
+elasticsearch-dsl = "^7.4.0"
+django-elasticsearch-dsl = "^7.4"
 
 [build-system]
 requires = ["poetry-core"]

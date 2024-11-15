@@ -1,29 +1,17 @@
-bakery-setup:
-	git clone https://github.com/wagtail/bakerydemo.git --config core.autocrlf=input
-
-docker-compose = docker compose -f ./bakerydemo/docker-compose.yml -f ./bakerydemo-overrides/docker-compose.wes.yml
-
 bakery-init:
-	cp ./bakerydemo-overrides/settings/wes.py ./bakerydemo/bakerydemo/settings/wes.py
-	$(docker-compose) up --build -d
-	$(docker-compose) run app /venv/bin/python manage.py migrate
-	$(docker-compose) run app /venv/bin/python manage.py load_initial_data
+	docker compose build
+	docker compose up -d
+	docker compose run app ./manage.py migrate
+	docker compose run app ./manage.py load_initial_data
+	docker compose run app ./manage.py update_index
 
-bakery-start:
-	$(docker-compose) up
-
-bakery-stop:
-	$(docker-compose) stop
-
-bakery-down:
-	$(docker-compose) down
-
-bakery-clear:
-	$(docker-compose) down
-	rm -rf bakerydemo
+bakery-refresh:
+	docker compose build
+	docker compose down app
+	docker compose up -d
 
 bakery-bash:
-	$(docker-compose) run app bash
+	docker compose run app bash
 
 build-package:
 	poetry build

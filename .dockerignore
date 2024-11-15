@@ -1,0 +1,8 @@
+.envrc
+.vscode
+.direnv
+Dockerfile
+docker-compose.yml
+.toolversions
+.gitignore
+Makefile

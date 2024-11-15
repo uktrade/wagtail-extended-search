@@ -1,0 +1,65 @@
+services:
+
+  db:
+    restart: unless-stopped
+    image: postgres:14.1
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: changeme
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    restart: unless-stopped
+    image: redis:buster
+    ports:
+      - "6379:6379"
+
+  opensearch:
+    image: opensearchproject/opensearch:1.3.7
+    ports:
+      - "9200:9200"
+    environment:
+      - "discovery.type=single-node"
+      - "bootstrap.memory_lock=true"
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "curl",
+          "-s",
+          "-f",
+          "http://localhost:9200/_cat/health"
+        ]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./bakerydemo-overrides:/bakerydemo/overrides/
+      - ./:/package/
+    ports:
+      - "0.0.0.0:8000:8000"
+    depends_on:
+      - db
+      - redis
+      - opensearch
+    environment:
+      DJANGO_SECRET_KEY: changeme
+      DATABASE_URL: postgres://app_user:changeme@db/app_db
+      REDIS_URL: redis://redis
+      DJANGO_SETTINGS_MODULE: overrides.settings
+      OPENSEARCH_URL: http://opensearch:9200
+    stdin_open: true
+    tty: true

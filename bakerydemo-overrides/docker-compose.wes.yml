@@ -1,7 +1,0 @@
-services:
-  app:
-    environment:
-      DJANGO_SETTINGS_MODULE: bakerydemo.settings.wes
-    volumes:
-      - ../:/code/wagtail_extended_search
-      - ./settings/:/code/bakerydemo/settings/wes/
