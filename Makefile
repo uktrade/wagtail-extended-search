@@ -13,11 +13,11 @@ bakery-refresh:
 bakery-bash:
 	docker compose run app bash
 
-build-package:
-	poetry build
+# build-package:
+# 	poetry build
 
-push-pypi-test:
-	poetry publish -r test-pypi
+# push-pypi-test:
+# 	poetry publish -r test-pypi
 
-push-pypi:
-	poetry publish
+# push-pypi:
+# 	poetry publish
