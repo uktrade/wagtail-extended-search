@@ -10,6 +10,7 @@ RUN git clone https://github.com/wagtail/bakerydemo.git --config core.autocrlf=i
 WORKDIR /bakerydemo
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
+RUN pip install debugpy
 
 # Fix Bakerydemo's urllib3 version
 RUN pip uninstall urllib3 requests -y

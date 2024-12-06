@@ -47,10 +47,12 @@ services:
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
+      - ./bakerydemo-overrides/manage.py:/bakerydemo/manage.py
       - ./bakerydemo-overrides:/bakerydemo/overrides/
       - ./:/package/
     ports:
-      - "0.0.0.0:8000:8000"
+      - 5678:5678
+      - 8000:8000
     depends_on:
       - db
       - redis
@@ -61,5 +63,6 @@ services:
       REDIS_URL: redis://redis
       DJANGO_SETTINGS_MODULE: overrides.settings
       OPENSEARCH_URL: http://opensearch:9200
+      ENABLE_DEBUGPY: true
     stdin_open: true
     tty: true
