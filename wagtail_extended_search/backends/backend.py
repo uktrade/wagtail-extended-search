@@ -205,6 +205,9 @@ class OnlyFieldSearchQueryCompiler(ExtendedSearchQueryCompiler):
         if not isinstance(query, OnlyFields):
             return super()._compile_query(query, field, boost)
 
+        # FIXME: OnlyFields logic is breaking search
+        return super()._compile_query(query.subquery, field, boost)
+
         remapped_fields = self._remap_fields(
             query.fields,
             get_searchable_fields__kwargs={

@@ -6,6 +6,7 @@ ROOT_URLCONF = "overrides.urls"
 
 INSTALLED_APPS += [  # noqa: F405
     "wagtail_extended_search",
+    "overrides.patching",
 ]
 
 OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL")
