@@ -26,7 +26,7 @@ ENV DJANGO_SETTINGS_MODULE=bakerydemo.settings.production DJANGO_DEBUG=off
 RUN DATABASE_URL=postgres://none REDIS_URL=none python manage.py collectstatic --noinput
 
 # make sure static files are writable by uWSGI process
-RUN mkdir -p /bakerydemo/bakerydemo/media/images && mkdir -p /bakerydemo/bakerydemo/media/original_images && chown -R 1000:2000 /bakerydemo/bakerydemo/media
+RUN mkdir -p /bakerydemo/bakerydemo/media/images && mkdir -p /bakerydemo/bakerydemo/media/original_images
 
 # mark the destination for images as a volume
 VOLUME ["/bakerydemo/bakerydemo/media/images/"]

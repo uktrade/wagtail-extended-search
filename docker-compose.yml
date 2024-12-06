@@ -50,6 +50,7 @@ services:
       - ./bakerydemo-overrides/manage.py:/bakerydemo/manage.py
       - ./bakerydemo-overrides:/bakerydemo/overrides/
       - ./:/package/
+      - ./media:/bakerydemo/bakerydemo/media/
     ports:
       - 5678:5678
       - 8000:8000
