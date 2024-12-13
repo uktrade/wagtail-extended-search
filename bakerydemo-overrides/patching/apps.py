@@ -20,4 +20,4 @@ class PatchingConfig(AppConfig):
         if WESIndexed not in Page.__bases__:
             Page.__bases__ += (WESIndexed,)
 
-            Page.indexed_fields = [DWIndexedField("title", search=True)]
+        Page.indexed_fields = [DWIndexedField("title", search=True)]
