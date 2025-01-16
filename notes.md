@@ -27,6 +27,8 @@ What will conceptually get into wagtail:
 - Query caching
   - Currently done in python, but each search backend might have its own caching mechanism
   - Look into building OpenSearch templates at build time and then reusing them at runtime
+- Should we reimplement `autocomplete` in Wagtail core using analysers instead of the current hardcoded approach?
+  - When a field is indexed as an autocomplete field, Wagtail uses a specific analyser to index it. But there is no clear hook to extend it (multiple analyser support, etc.)
 
 # Package code
 

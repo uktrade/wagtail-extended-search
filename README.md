@@ -44,35 +44,67 @@ The default Wagtail search behaviour works for ElasticSearch uses some really si
 
 This package brings a custom query builder object that looks over the indexed models and builds a query for the relevant models so that we can have a more targeted search.
 
-### Search functionality
+### Search indexing changes
+
+#### Model Field Name
+
+`wagtail_extended_search.layers.model_field_name`
+
+TODO: Describe this functionality
+
+#### Multi Query
+
+`wagtail_extended_search.layers.multi_query`
+
+TODO: Describe this functionality
+
+#### One-to-Many
+
+`wagtail_extended_search.layers.one_to_many`
+
+TODO: Describe this functionality
+
+#### Related Fields
+
+`wagtail_extended_search.layers.related_fields`
+
+TODO: Describe this functionality
+
+#### Wagtail Core
+
+`wagtail_extended_search.layers.wagtail_core`
+
+TODO: Describe this functionality
+
+### Search backend changes
 
 #### Boost
 
-`wagtail_extended_search.search_backend_concepts.boost`
+`wagtail_extended_search.layers.boost`
 
 TODO: Describe this functionality
 
 #### Filtered
 
-`wagtail_extended_search.search_backend_concepts.filtered`
+`wagtail_extended_search.layers.filtered`
 
 TODO: Describe this functionality
 
 #### Function Score
 
-`wagtail_extended_search.search_backend_concepts.function_score`
+`wagtail_extended_search.layers.function_score`
 
 TODO: Describe this functionality
 
 #### Nested
 
-`wagtail_extended_search.search_backend_concepts.nested`
+`wagtail_extended_search.layers.nested`
 
 TODO: Describe this functionality
 
 #### Only Fields
 
-`wagtail_extended_search.search_backend_concepts.only_fields`
+`wagtail_extended_search.layers.only_fields`
 
 TODO: Describe this functionality
 

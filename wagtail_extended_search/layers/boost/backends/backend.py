@@ -1,6 +1,8 @@
 from wagtail.search.query import Fuzzy, Phrase
 
-from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
+from wagtail_extended_search.layers.base.backends.backend import (
+    ExtendedSearchQueryCompiler,
+)
 
 
 class BoostSearchQueryCompiler(ExtendedSearchQueryCompiler):

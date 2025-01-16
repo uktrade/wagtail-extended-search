@@ -12,19 +12,17 @@ from wagtail_extended_search import settings as search_settings
 from wagtail_extended_search.index import (
     BaseField,
     Indexed,
-    IndexedField,
-    RelatedFields,
-    ScoreFunction,
-    SearchField,
     get_indexed_field_name,
     get_indexed_models,
 )
-from wagtail_extended_search.search_backend_concepts.filtered.query import Filtered
-from wagtail_extended_search.search_backend_concepts.function_score.query import (
-    FunctionScore,
-)
-from wagtail_extended_search.search_backend_concepts.nested.query import Nested
-from wagtail_extended_search.search_backend_concepts.only_fields.query import OnlyFields
+from wagtail_extended_search.layers.filtered.query import Filtered
+from wagtail_extended_search.layers.function_score.index import ScoreFunction
+from wagtail_extended_search.layers.function_score.query import FunctionScore
+from wagtail_extended_search.layers.model_field_name.index import SearchField
+from wagtail_extended_search.layers.nested.query import Nested
+from wagtail_extended_search.layers.one_to_many.index import IndexedField
+from wagtail_extended_search.layers.only_fields.query import OnlyFields
+from wagtail_extended_search.layers.related_fields.index import RelatedFields
 from wagtail_extended_search.types import AnalysisType, SearchQueryType
 
 logger = logging.getLogger(__name__)

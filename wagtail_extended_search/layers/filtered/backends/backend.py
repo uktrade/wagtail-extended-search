@@ -1,7 +1,9 @@
 from wagtail.search.backends.elasticsearch7 import Elasticsearch7Mapping
 
-from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
-from wagtail_extended_search.search_backend_concepts.filtered.query import Filtered
+from wagtail_extended_search.layers.base.backends.backend import (
+    ExtendedSearchQueryCompiler,
+)
+from wagtail_extended_search.layers.filtered.query import Filtered
 
 
 class FilteredSearchMapping(Elasticsearch7Mapping):

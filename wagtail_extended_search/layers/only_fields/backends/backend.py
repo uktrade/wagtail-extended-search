@@ -1,9 +1,11 @@
 from wagtail.search.index import SearchField
 from wagtail.search.query import MATCH_NONE
 
-from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
-from wagtail_extended_search.index import RelatedFields
-from wagtail_extended_search.search_backend_concepts.only_fields.query import OnlyFields
+from wagtail_extended_search.layers.base.backends.backend import (
+    ExtendedSearchQueryCompiler,
+)
+from wagtail_extended_search.layers.only_fields.query import OnlyFields
+from wagtail_extended_search.layers.related_fields.index import RelatedFields
 
 
 class OnlyFieldSearchQueryCompiler(ExtendedSearchQueryCompiler):
