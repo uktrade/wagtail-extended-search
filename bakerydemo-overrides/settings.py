@@ -19,7 +19,7 @@ ELASTICSEARCH_DSL = {
 
 WAGTAILSEARCH_BACKENDS = {
     "default": {
-        "BACKEND": "wagtail_extended_search.backends.backend.CustomSearchBackend",
+        "BACKEND": "wagtail_extended_search.backends.backend.SearchBackend",
         "AUTO_UPDATE": True,
         "ATOMIC_REBUILD": True,
         "URLS": [OPENSEARCH_URL],
