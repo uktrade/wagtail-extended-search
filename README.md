@@ -44,6 +44,38 @@ The default Wagtail search behaviour works for ElasticSearch uses some really si
 
 This package brings a custom query builder object that looks over the indexed models and builds a query for the relevant models so that we can have a more targeted search.
 
+### Search functionality
+
+#### Boost
+
+`wagtail_extended_search.boost`
+
+TODO: Describe this functionality
+
+#### Filtered
+
+`wagtail_extended_search.filtered`
+
+TODO: Describe this functionality
+
+#### Function Score
+
+`wagtail_extended_search.function_score`
+
+TODO: Describe this functionality
+
+#### Nested
+
+`wagtail_extended_search.nested`
+
+TODO: Describe this functionality
+
+#### Only Fields
+
+`wagtail_extended_search.only_fields`
+
+TODO: Describe this functionality
+
 ## Running local development
 
 We use the [Wagtail Bakery Demo](https://github.com/wagtail/bakerydemo) as a base Wagtail project to run the package locally for testing purposes.
