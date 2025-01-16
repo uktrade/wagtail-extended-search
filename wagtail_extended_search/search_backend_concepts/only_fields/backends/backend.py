@@ -3,7 +3,7 @@ from wagtail.search.query import MATCH_NONE
 
 from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
 from wagtail_extended_search.index import RelatedFields
-from wagtail_extended_search.only_fields.query import OnlyFields
+from wagtail_extended_search.search_backend_concepts.only_fields.query import OnlyFields
 
 
 class OnlyFieldSearchQueryCompiler(ExtendedSearchQueryCompiler):

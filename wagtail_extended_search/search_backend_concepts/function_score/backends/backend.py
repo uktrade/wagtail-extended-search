@@ -1,5 +1,7 @@
 from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
-from wagtail_extended_search.function_score.query import FunctionScore
+from wagtail_extended_search.search_backend_concepts.function_score.query import (
+    FunctionScore,
+)
 
 
 class FunctionScoreSearchQueryCompiler(ExtendedSearchQueryCompiler):

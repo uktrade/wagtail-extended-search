@@ -9,8 +9,6 @@ from wagtail.search import index
 from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 
 from wagtail_extended_search import settings as search_settings
-from wagtail_extended_search.filtered.query import Filtered
-from wagtail_extended_search.function_score.query import FunctionScore
 from wagtail_extended_search.index import (
     BaseField,
     Indexed,
@@ -21,8 +19,12 @@ from wagtail_extended_search.index import (
     get_indexed_field_name,
     get_indexed_models,
 )
-from wagtail_extended_search.nested.query import Nested
-from wagtail_extended_search.only_fields.query import OnlyFields
+from wagtail_extended_search.search_backend_concepts.filtered.query import Filtered
+from wagtail_extended_search.search_backend_concepts.function_score.query import (
+    FunctionScore,
+)
+from wagtail_extended_search.search_backend_concepts.nested.query import Nested
+from wagtail_extended_search.search_backend_concepts.only_fields.query import OnlyFields
 from wagtail_extended_search.types import AnalysisType, SearchQueryType
 
 logger = logging.getLogger(__name__)

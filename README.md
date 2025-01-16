@@ -48,31 +48,31 @@ This package brings a custom query builder object that looks over the indexed mo
 
 #### Boost
 
-`wagtail_extended_search.boost`
+`wagtail_extended_search.search_backend_concepts.boost`
 
 TODO: Describe this functionality
 
 #### Filtered
 
-`wagtail_extended_search.filtered`
+`wagtail_extended_search.search_backend_concepts.filtered`
 
 TODO: Describe this functionality
 
 #### Function Score
 
-`wagtail_extended_search.function_score`
+`wagtail_extended_search.search_backend_concepts.function_score`
 
 TODO: Describe this functionality
 
 #### Nested
 
-`wagtail_extended_search.nested`
+`wagtail_extended_search.search_backend_concepts.nested`
 
 TODO: Describe this functionality
 
 #### Only Fields
 
-`wagtail_extended_search.only_fields`
+`wagtail_extended_search.search_backend_concepts.only_fields`
 
 TODO: Describe this functionality
 

@@ -2,7 +2,7 @@ from wagtail.search.index import SearchField
 
 from wagtail_extended_search.base.backends.backend import ExtendedSearchQueryCompiler
 from wagtail_extended_search.index import RelatedFields
-from wagtail_extended_search.nested.query import Nested
+from wagtail_extended_search.search_backend_concepts.nested.query import Nested
 
 
 class NestedSearchQueryCompiler(ExtendedSearchQueryCompiler):
