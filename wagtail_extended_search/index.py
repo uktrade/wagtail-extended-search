@@ -66,7 +66,6 @@ class Indexed(index.Indexed):
                             processed_index_fields[f.model_field_name] = []
                         model_field_names.append(f.model_field_name)
                     processed_index_fields[f.model_field_name].append(f)
-                    print(f"ADDED {f.model_field_name} for {model_class}")
                 else:
                     if f.field_name not in model_field_names:
                         if f.field_name not in processed_index_fields:
