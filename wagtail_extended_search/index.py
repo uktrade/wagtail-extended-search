@@ -49,20 +49,30 @@ class Indexed(index.Indexed):
         class_mro = list(inspect.getmro(cls))
         class_mro.reverse()
         for model_class in class_mro:
+            if not class_is_indexed(model_class):
+                continue
+            if not issubclass(model_class, Indexed):
+                continue
+            if not model_class.has_unique_index_fields():
+                continue
+
             model_field_names = []
-            if class_is_indexed(model_class) and issubclass(model_class, Indexed):
-                for f in model_class.indexed_fields:
-                    f.configuration_model = model_class
-                    if isinstance(f, BaseField):
-                        if f.model_field_name not in model_field_names:
+
+            for f in model_class.indexed_fields:
+                f.configuration_model = model_class
+                if isinstance(f, BaseField):
+                    if f.model_field_name not in model_field_names:
+                        if f.model_field_name not in processed_index_fields:
                             processed_index_fields[f.model_field_name] = []
-                            model_field_names.append(f.model_field_name)
-                        processed_index_fields[f.model_field_name].append(f)
-                    else:
-                        if f.field_name not in model_field_names:
+                        model_field_names.append(f.model_field_name)
+                    processed_index_fields[f.model_field_name].append(f)
+                    print(f"ADDED {f.model_field_name} for {model_class}")
+                else:
+                    if f.field_name not in model_field_names:
+                        if f.field_name not in processed_index_fields:
                             processed_index_fields[f.field_name] = []
-                            model_field_names.append(f.field_name)
-                        processed_index_fields[f.field_name].append(f)
+                        model_field_names.append(f.field_name)
+                    processed_index_fields[f.field_name].append(f)
 
         if as_dict:
             return processed_index_fields

@@ -6,7 +6,7 @@ class PatchingConfig(AppConfig):
     verbose_name = "Patching"
 
     def ready(self):
-        # from bakerydemo.blog.models import BlogPage
+        from bakerydemo.blog.models import BlogPage
         from wagtail.models import Page
         from wagtail.search.index import Indexed
 
@@ -20,4 +20,9 @@ class PatchingConfig(AppConfig):
         if WESIndexed not in Page.__bases__:
             Page.__bases__ += (WESIndexed,)
 
-        Page.indexed_fields = [DWIndexedField("title", search=True)]
+        Page.indexed_fields = [
+            DWIndexedField("title", search=True),
+        ]
+        BlogPage.indexed_fields = [
+            DWIndexedField("title", search=True, keyword=True),
+        ]
