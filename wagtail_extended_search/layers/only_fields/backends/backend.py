@@ -46,6 +46,7 @@ class OnlyFieldSearchQueryCompiler(ExtendedSearchQueryCompiler):
             )
         }
 
+        # TODO: Likely needs some tweaking to work with the Field() object
         for field_name in fields:
             field = searchable_fields.get(field_name)
             if field:

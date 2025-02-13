@@ -39,6 +39,14 @@ class ExtendedSearchQueryCompiler(Elasticsearch7SearchQueryCompiler):
         """
         TODO: Review: The only difference here is converting fields from
         string to Field objects.
+
+        Converting to Field objects is needed so that we have access to the
+        following for our further changes:
+        - `Field.field_name`
+        - `Field.boost`
+        In the following layers:
+        - `wagtail_extended_search.layers.boost`
+        - `wagtail_extended_search.layers.only_fields`
         """
 
         fields = [self.to_field(f) for f in self.remapped_fields]
