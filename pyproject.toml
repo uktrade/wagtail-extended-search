@@ -2,7 +2,10 @@
 name = "wagtail-extended-search"
 version = "0.1.0"
 description = ""
-authors = ["Cameron Lamb <jafacakes2011@hotmail.co.uk>"]
+authors = [
+    "Cameron Lamb <live.services@digital.trade.gov.uk>",
+    "Marcel Kornblum <live.services@digital.trade.gov.uk>",
+]
 license = "MIT"
 readme = "README.md"
 

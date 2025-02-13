@@ -25,4 +25,5 @@ class PatchingConfig(AppConfig):
         ]
         BlogPage.indexed_fields = [
             DWIndexedField("title", search=True, keyword=True),
+            DWIndexedField("body", search=True, keyword=True),
         ]
