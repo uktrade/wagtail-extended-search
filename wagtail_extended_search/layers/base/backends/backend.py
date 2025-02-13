@@ -15,6 +15,7 @@ class ExtendedSearchQueryCompiler(Elasticsearch7SearchQueryCompiler):
     PR maybe worth referencing https://github.com/wagtail/wagtail/issues/5422
     """
 
+    # TODO: Review this as boosting has changed in Wagtail!
     def get_boosted_fields(self, fields):
         """
         This is needed because we are backporting to strings WAY TOO EARLY
@@ -23,6 +24,7 @@ class ExtendedSearchQueryCompiler(Elasticsearch7SearchQueryCompiler):
 
         return super().get_boosted_fields(boostable_fields)
 
+    # TODO: Review this, it doesn't look to be used!
     def to_string(self, field: Union[str, Field]) -> str:
         if isinstance(field, Field):
             return field.field_name
@@ -35,12 +37,18 @@ class ExtendedSearchQueryCompiler(Elasticsearch7SearchQueryCompiler):
 
     def get_inner_query(self):
         """
-        This is a brittle override of the Elasticsearch7SearchQueryCompiler.
-        get_inner_query, acting as a stand in for getting these changes merged
-        upstream. It exists in order to break out the _join_and_compile_queries
-        method
+        TODO: Review: The only difference here is converting fields from
+        string to Field objects.
         """
+
         fields = [self.to_field(f) for f in self.remapped_fields]
+
+        #
+        # All of the code below this is the same as in the
+        # super().get_inner_query()
+        #
+        # We have to rewrite it here because we need to use the fields.
+        #
 
         if len(fields) == 0:
             # No fields. Return a query that'll match nothing
