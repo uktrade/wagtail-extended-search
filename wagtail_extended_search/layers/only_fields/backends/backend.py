@@ -125,7 +125,3 @@ class OnlyFieldSearchQueryCompiler(ExtendedSearchQueryCompiler):
             # was defined in the search() method but has been excluded from
             # this part of the tree with an OnlyFields filter
             return self._compile_query(MATCH_NONE, field, boost)
-            return self._compile_query(MATCH_NONE, field, boost)
-            # this part of the tree with an OnlyFields filter
-            return self._compile_query(MATCH_NONE, field, boost)
-            return self._compile_query(MATCH_NONE, field, boost)
