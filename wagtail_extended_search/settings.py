@@ -8,8 +8,8 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.utils import ProgrammingError
 
 from wagtail_extended_search import models
-from wagtail_extended_search.index import BaseField, get_indexed_models
-from wagtail_extended_search.layers.model_field_name.index import SearchField
+from wagtail_extended_search.index import get_indexed_models
+from wagtail_extended_search.layers.model_field_name.index import BaseField, SearchField
 from wagtail_extended_search.layers.related_fields.index import RelatedFields
 
 env_file_path = os.path.join(

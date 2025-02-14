@@ -10,7 +10,6 @@ from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 
 from wagtail_extended_search import settings as search_settings
 from wagtail_extended_search.index import (
-    BaseField,
     Indexed,
     get_indexed_field_name,
     get_indexed_models,
@@ -18,6 +17,9 @@ from wagtail_extended_search.index import (
 from wagtail_extended_search.layers.filtered.query import Filtered
 from wagtail_extended_search.layers.function_score.index import ScoreFunction
 from wagtail_extended_search.layers.function_score.query import FunctionScore
+from wagtail_extended_search.layers.model_field_name import (
+    index as model_field_name_index,
+)
 from wagtail_extended_search.layers.model_field_name.index import SearchField
 from wagtail_extended_search.layers.nested.query import Nested
 from wagtail_extended_search.layers.one_to_many.index import IndexedField
@@ -127,7 +129,7 @@ class QueryBuilder:
         analysis_type: AnalysisType,
         field: index.BaseField,
     ):
-        if isinstance(field, BaseField):
+        if isinstance(field, model_field_name_index.BaseField):
             base_field_name = field.get_full_model_field_name()
 
         boost = cls._get_boost_for_field_querytype_analysistype(
