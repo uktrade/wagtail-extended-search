@@ -235,7 +235,7 @@ class TestCustomQueryBuilder:
                     Filtered(
                         subquery=PlainText("foo"),
                         filters=[
-                            ("content_type", "in", "mock.extended_model"),
+                            ("content_type", "in", ["mock.extended_model"]),
                         ],
                     ),
                 ]

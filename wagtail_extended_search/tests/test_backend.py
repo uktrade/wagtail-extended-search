@@ -432,7 +432,7 @@ class TestFilteredSearchQueryCompiler:
         compiler._compile_query(query, field, 443)
         mock_compile_filtered.assert_not_called()
         query = Filtered(
-            query, filters=[("content_type", "in", "content.content_page")]
+            query, filters=[("content_type", "in", ["content.content_page"])]
         )
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
         compiler._compile_query(query, field, 443)
@@ -445,7 +445,7 @@ class TestFilteredSearchQueryCompiler:
         )
         query = Filtered(
             Phrase("quid"),
-            filters=[("content_type", "in", "content.content_page")],
+            filters=[("content_type", "in", ["content.content_page"])],
         )
         field = Field("foo")
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
@@ -460,8 +460,8 @@ class TestFilteredSearchQueryCompiler:
         query = Filtered(
             Phrase("quid"),
             filters=[
-                ("content_type", "in", "content.content_page"),
-                ("another_field", "notin", "anything"),
+                ("content_type", "in", ["content.content_page"]),
+                ("another_field", "notin", ["anything"]),
             ],
         )
         result = compiler._compile_filtered_query(query, [field], boost=1.0)

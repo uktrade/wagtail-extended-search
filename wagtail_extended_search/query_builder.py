@@ -370,7 +370,7 @@ class CustomQueryBuilder(QueryBuilder):
                     (
                         "content_type",
                         "in",
-                        sub_model_contenttype,
+                        [sub_model_contenttype],
                     ),
                 ],
             )
@@ -387,7 +387,7 @@ class CustomQueryBuilder(QueryBuilder):
                     (
                         "content_type",
                         "notin",
-                        queried_content_types,
+                        [queried_content_types],
                     ),
                 ],
             )
