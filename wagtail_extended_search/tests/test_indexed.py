@@ -12,11 +12,8 @@ from wagtail.images.models import Image
 from wagtail.models import Page
 from wagtailmedia.models import Media
 
-from wagtail_extended_search.index import (
-    DWIndexedField,
-    class_is_indexed,
-    get_indexed_models,
-)
+from wagtail_extended_search.index import DWIndexedField
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 from wagtail_extended_search.management.commands.create_index_fields_json import (
     JSON_FILE,
     get_indexed_models_and_fields_dict,
@@ -191,7 +188,7 @@ from wagtail_extended_search.management.commands.create_index_fields_json import
 #             ],
 #         )
 
-#         indexed_models = get_indexed_models()
+#         indexed_models = indexed_fields_index.get_indexed_models()
 
 #         mock_get_models.assert_called_once()
 #         assert mock_model_1 not in indexed_models
@@ -200,15 +197,15 @@ from wagtail_extended_search.management.commands.create_index_fields_json import
 #         assert mock_model_4 not in indexed_models
 
 #     def test_class_is_indexed(self):
-#         assert not class_is_indexed(Model)
-#         assert not class_is_indexed(AbstractModel)
-#         assert class_is_indexed(IndexedModel)
-#         assert not class_is_indexed(AbstractIndexedModel)
+#         assert not indexed_fields_index.class_is_indexed(Model)
+#         assert not indexed_fields_index.class_is_indexed(AbstractModel)
+#         assert indexed_fields_index.class_is_indexed(IndexedModel)
+#         assert not indexed_fields_index.class_is_indexed(AbstractIndexedModel)
 
 
 # class TestProject:
 #     def test_indexed_models(self):
-#         assert set(get_indexed_models()) == {
+#         assert set(indexed_fields_index.get_indexed_models()) == {
 #             IndexedModel,
 #             ChildModel,
 #             StandardIndexedModel,

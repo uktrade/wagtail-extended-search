@@ -10,14 +10,11 @@ from wagtail.search import index
 from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 
 from wagtail_extended_search import settings as search_settings
-from wagtail_extended_search.index import (
-    Indexed,
-    get_indexed_field_name,
-    get_indexed_models,
-)
+from wagtail_extended_search.index import Indexed, get_indexed_field_name
 from wagtail_extended_search.layers.filtered.query import Filtered
 from wagtail_extended_search.layers.function_score.index import ScoreFunction
 from wagtail_extended_search.layers.function_score.query import FunctionScore
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 from wagtail_extended_search.layers.model_field_name import (
     index as model_field_name_index,
 )
@@ -415,7 +412,7 @@ class CustomQueryBuilder(QueryBuilder):
         index fields.
         """
         extended_model_classes = []
-        indexed_models = get_indexed_models()
+        indexed_models = indexed_fields_index.get_indexed_models()
         for indexed_model in indexed_models:
             if (
                 indexed_model != model_class

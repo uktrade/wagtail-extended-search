@@ -5,7 +5,7 @@ from wagtail.documents.models import Document
 from wagtail.images.models import Image
 from wagtailmedia.models import Media
 
-from wagtail_extended_search.index import get_indexed_models
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 
 # Path: ./management/commands/create_index_fields_json.py
 JSON_FILE = Path(__file__).parent / "indexed_models_and_fields.json"
@@ -19,7 +19,7 @@ def get_indexed_models_and_fields_dict():
 
     return {
         str(model): sorted([str(f) for f in model.get_search_fields()])
-        for model in get_indexed_models()
+        for model in indexed_fields_index.get_indexed_models()
         if model not in [Media, Document, Image]
     }
 

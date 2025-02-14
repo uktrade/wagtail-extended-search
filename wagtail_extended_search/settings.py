@@ -8,7 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.utils import ProgrammingError
 
 from wagtail_extended_search import models
-from wagtail_extended_search.index import get_indexed_models
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 from wagtail_extended_search.layers.model_field_name.index import BaseField, SearchField
 from wagtail_extended_search.layers.related_fields.index import RelatedFields
 
@@ -214,7 +214,7 @@ class SearchSettings(NestedChainMap):
 
     def _get_all_indexed_fields(self):
         fields = {}
-        for model_cls in get_indexed_models():
+        for model_cls in indexed_fields_index.get_indexed_models():
             for search_field in model_cls.get_search_fields():
                 if isinstance(search_field, SearchField) or isinstance(
                     search_field, RelatedFields

@@ -1,5 +1,6 @@
 import inspect
 
+from django.core import checks
 from wagtail.search import index
 
 
@@ -101,6 +102,25 @@ class FilterField(index.FilterField, BaseField, index.BaseField): ...
 
 
 class Indexed(index.Indexed):
+    @classmethod
+    def _check_search_fields(cls, **kwargs):
+        errors = []
+        for field in cls.get_search_fields():
+            message = "{model}.search_fields contains non-existent field '{name}'"
+            # Note: When this is moved into Wagtail Core, we just need to check
+            # field.model_field_name as that will default back to field_name.
+            if not cls._has_field(field.field_name) and not cls._has_field(
+                field.model_field_name
+            ):
+                errors.append(
+                    checks.Warning(
+                        message.format(model=cls.__name__, name=field.field_name),
+                        obj=cls,
+                        id="wagtailsearch.W004",
+                    )
+                )
+        return errors
+
     @classmethod
     def get_searchable_search_fields(cls):
         return [
