@@ -11,8 +11,8 @@ from wagtail_extended_search.layers.filtered.query import Filtered
 
 class FilteredSearchMapping(Elasticsearch7Mapping):
     def get_field_column_name(self, field):
-        if isinstance(field, str) and field == "content_type":
-            return "content_type"
+        if isinstance(field, str) and field == "content_type_id":
+            return "content_type_id"
         return super().get_field_column_name(field)
 
 

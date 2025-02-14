@@ -3,6 +3,7 @@ import logging
 from typing import Optional, Type
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import models
 from wagtail.search import index
@@ -354,28 +355,26 @@ class CustomQueryBuilder(QueryBuilder):
         )
         # build full query for each extended model
         queries = []
-        queried_content_types = []
+        sub_model_contenttype_ids = []
         for sub_model_class in extended_models:
             # Filter so it only applies to "docs with that model anywhere in the
             # contenttypes list".
 
-            sub_model_contenttype = (
-                f"{sub_model_class._meta.app_label}.{sub_model_class.__name__}"
-            )
+            sub_model_contenttype = ContentType.objects.get_for_model(sub_model_class)
 
             subquery = cls.build_query_for_model(sub_model_class)
             query = Filtered(
                 subquery=subquery,
                 filters=[
                     (
-                        "content_type",
+                        "content_type_id",
                         "in",
-                        [sub_model_contenttype],
+                        [sub_model_contenttype.id],
                     ),
                 ],
             )
             queries.append(query)
-            queried_content_types.append(sub_model_contenttype)
+            sub_model_contenttype_ids.append(sub_model_contenttype.id)
 
         # Build query for root model passed in to method, filter to exclude docs
         # with contenttypes matching any of the already queried models.
@@ -385,9 +384,9 @@ class CustomQueryBuilder(QueryBuilder):
                 subquery=subquery,
                 filters=[
                     (
-                        "content_type",
+                        "content_type_id",
                         "notin",
-                        [queried_content_types],
+                        sub_model_contenttype_ids,
                     ),
                 ],
             )

@@ -432,7 +432,7 @@ class TestFilteredSearchQueryCompiler:
         compiler._compile_query(query, field, 443)
         mock_compile_filtered.assert_not_called()
         query = Filtered(
-            query, filters=[("content_type", "in", ["content.content_page"])]
+            query, filters=[("content_type_id", "in", ["content.content_page"])]
         )
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
         compiler._compile_query(query, field, 443)
@@ -445,7 +445,7 @@ class TestFilteredSearchQueryCompiler:
         )
         query = Filtered(
             Phrase("quid"),
-            filters=[("content_type", "in", ["content.content_page"])],
+            filters=[("content_type_id", "in", ["content.content_page"])],
         )
         field = Field("foo")
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
@@ -460,7 +460,7 @@ class TestFilteredSearchQueryCompiler:
         query = Filtered(
             Phrase("quid"),
             filters=[
-                ("content_type", "in", ["content.content_page"]),
+                ("content_type_id", "in", ["content.content_page"]),
                 ("another_field", "notin", ["anything"]),
             ],
         )
@@ -504,9 +504,9 @@ class TestFilteredSearchMapping:
         mock_parent.assert_called_once()
 
         mock_parent.reset_mock()
-        result = map.get_field_column_name("content_type")
+        result = map.get_field_column_name("content_type_id")
         mock_parent.assert_not_called()
-        assert result == "content_type"
+        assert result == "content_type_id"
 
 
 class TestCustomSearchBackend:
