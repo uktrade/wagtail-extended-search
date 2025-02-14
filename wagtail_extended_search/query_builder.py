@@ -367,7 +367,7 @@ class CustomQueryBuilder(QueryBuilder):
                 filters=[
                     (
                         "content_type",
-                        "contains",
+                        "in",
                         sub_model_contenttype,
                     ),
                 ],
@@ -384,7 +384,7 @@ class CustomQueryBuilder(QueryBuilder):
                 filters=[
                     (
                         "content_type",
-                        "excludes",
+                        "notin",
                         queried_content_types,
                     ),
                 ],

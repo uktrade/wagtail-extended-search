@@ -21,6 +21,7 @@ class PatchingConfig(AppConfig):
             Page.__bases__ += (WESIndexed,)
 
         Page.indexed_fields = [
+            DWIndexedField("content_type", filter=True),
             DWIndexedField("title", search=True),
         ]
         BlogPage.indexed_fields = [
