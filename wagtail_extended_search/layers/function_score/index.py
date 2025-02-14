@@ -1,6 +1,7 @@
 from typing import Optional
 
 from django.db import models
+from wagtail.search import index
 
 from wagtail_extended_search.layers.model_field_name.index import BaseField, FilterField
 
@@ -100,3 +101,13 @@ class ScoreFunction:
             )
 
         return generated_fields
+
+
+class Indexed(index.Indexed):
+    @classmethod
+    def get_score_functions(cls):
+        return [
+            field
+            for field in cls.get_indexed_fields()
+            if isinstance(field, ScoreFunction)
+        ]

@@ -8,9 +8,12 @@ from django.core import checks
 from django.db import models
 from wagtail.search import index
 
-from wagtail_extended_search.layers.function_score.index import ScoreFunction
-from wagtail_extended_search.layers.model_field_name.index import BaseField
+from wagtail_extended_search.layers.function_score import index as function_score_index
+from wagtail_extended_search.layers.model_field_name import (
+    index as model_field_name_index,
+)
 from wagtail_extended_search.layers.multi_query.index import MultiQueryIndexedField
+from wagtail_extended_search.layers.related_fields import index as related_fields_index
 from wagtail_extended_search.types import AnalysisType
 
 logger = logging.getLogger(__name__)
@@ -21,7 +24,11 @@ logger = logging.getLogger(__name__)
 #############################
 
 
-class Indexed(index.Indexed):
+class Indexed(
+    function_score_index.Indexed,
+    related_fields_index.Indexed,
+    model_field_name_index.Indexed,
+):
     search_fields = []
 
     @classmethod
@@ -60,7 +67,7 @@ class Indexed(index.Indexed):
 
             for f in model_class.indexed_fields:
                 f.configuration_model = model_class
-                if isinstance(f, BaseField):
+                if isinstance(f, model_field_name_index.BaseField):
                     if f.model_field_name not in model_field_names:
                         if f.model_field_name not in processed_index_fields:
                             processed_index_fields[f.model_field_name] = []
@@ -118,14 +125,6 @@ class Indexed(index.Indexed):
         parent_model = cls.indexed_get_parent()
         parent_indexed_fields = getattr(parent_model, "indexed_fields", [])
         return cls.indexed_fields != parent_indexed_fields
-
-    @classmethod
-    def get_score_functions(cls):
-        return [
-            field
-            for field in cls.get_indexed_fields()
-            if isinstance(field, ScoreFunction)
-        ]
 
     @classmethod
     def get_root_index_model(cls):

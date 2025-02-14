@@ -97,3 +97,16 @@ class RelatedFields(ModelFieldNameMixin, index.RelatedFields):
 
     def __repr__(self) -> str:
         return f"<RelatedFields {self.field_name} fields={sorted([str(f) for f in self.fields])}>"
+
+
+class Indexed(index.Indexed):
+    @classmethod
+    def get_indexed_objects(cls):
+        queryset = cls.objects.all()
+
+        # Add prefetch/select related for RelatedFields
+        for field in cls.get_search_fields():
+            if isinstance(field, RelatedFields):
+                queryset = field.select_on_queryset(queryset)
+
+        return queryset

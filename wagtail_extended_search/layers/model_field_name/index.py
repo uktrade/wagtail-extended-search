@@ -98,3 +98,25 @@ class AutocompleteField(index.AutocompleteField, BaseField, index.BaseField): ..
 
 
 class FilterField(index.FilterField, BaseField, index.BaseField): ...
+
+
+class Indexed(index.Indexed):
+    @classmethod
+    def get_searchable_search_fields(cls):
+        return [
+            field for field in cls.get_search_fields() if isinstance(field, SearchField)
+        ]
+
+    @classmethod
+    def get_autocomplete_search_fields(cls):
+        return [
+            field
+            for field in cls.get_search_fields()
+            if isinstance(field, AutocompleteField)
+        ]
+
+    @classmethod
+    def get_filterable_search_fields(cls):
+        return [
+            field for field in cls.get_search_fields() if isinstance(field, FilterField)
+        ]
