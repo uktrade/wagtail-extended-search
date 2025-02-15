@@ -133,7 +133,6 @@ def class_is_indexed(cls):
 
 
 class Indexed(
-    function_score_index.Indexed,
     related_fields_index.Indexed,
     model_field_name_index.Indexed,
     # index.Indexed,
@@ -239,24 +238,3 @@ def get_indexed_models() -> list[Type[Indexed]]:
         if issubclass(model, index.Indexed) and not model._meta.abstract
         # and model.search_fields
     ]
-
-
-class ScoreFunction(function_score_index.ScoreFunction):
-    configuration_model: Optional[models.Model] = None
-
-    def get_score_name(self):
-        if not self.configuration_model:
-            raise AttributeError(
-                "The configuration_model attribute must be set on the "
-                "ScoreFunction instance to use it."
-            )
-        score_name = super().get_score_name()
-        if self.configuration_model != self.configuration_model.get_root_index_model():
-            score_name = (
-                self.configuration_model._meta.app_label
-                + "_"
-                + self.configuration_model.__name__.lower()
-                + "__"
-                + score_name
-            )
-        return score_name

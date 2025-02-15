@@ -10,8 +10,9 @@ from wagtail.search import index
 from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 
 from wagtail_extended_search import settings as search_settings
-from wagtail_extended_search.index import Indexed, get_indexed_field_name
+from wagtail_extended_search.index import Indexed, ScoreFunction, get_indexed_field_name
 from wagtail_extended_search.layers.filtered.query import Filtered
+from wagtail_extended_search.layers.function_score import index as function_score_index
 from wagtail_extended_search.layers.function_score.query import FunctionScore
 from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 from wagtail_extended_search.layers.nested.query import Nested
@@ -270,7 +271,7 @@ class CustomQueryBuilder(QueryBuilder):
         query = None
         score_configurations = []
         for field in model_class.get_indexed_fields():
-            if isinstance(field, indexed_fields_index.ScoreFunction):
+            if isinstance(field, ScoreFunction):
                 score_configurations.append(field)
             else:
                 query_elements = cls._build_search_query(model_class, field)
