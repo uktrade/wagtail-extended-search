@@ -1,7 +1,7 @@
 # type: ignore  (type checking is unhappy about the mixin referencing fields it doesnt define)
 import inspect
 import logging
-from typing import Type
+from typing import Optional, Type
 
 from django.apps import apps
 from django.db import models
@@ -11,9 +11,110 @@ from wagtail_extended_search.layers.function_score import index as function_scor
 from wagtail_extended_search.layers.model_field_name import (
     index as model_field_name_index,
 )
+from wagtail_extended_search.layers.one_to_many import index as one_to_many_index
 from wagtail_extended_search.layers.related_fields import index as related_fields_index
 
 logger = logging.getLogger(__name__)
+
+
+class ModelFieldNameMixin(related_fields_index.ModelFieldNameMixin):
+    def __init__(
+        self,
+        field_name,
+        *args,
+        configuration_model=None,
+        **kwargs,
+    ):
+        super().__init__(field_name, *args, **kwargs)
+        self.configuration_model = configuration_model
+
+    def get_definition_model(self, cls):
+        if self.configuration_model:
+            return self.configuration_model
+
+        if base_cls := super().get_definition_model(cls):
+            return base_cls
+
+        # Find where it was defined by walking the inheritance tree
+        base_model_field_name = self.get_base_model_field_name()
+        for base_cls in inspect.getmro(cls):
+            if hasattr(base_cls, base_model_field_name):
+                return base_cls
+
+
+class BaseField(ModelFieldNameMixin, related_fields_index.BaseField): ...
+
+
+class SearchField(BaseField, related_fields_index.SearchField): ...
+
+
+class AutocompleteField(BaseField, related_fields_index.AutocompleteField): ...
+
+
+class FilterField(BaseField, related_fields_index.FilterField): ...
+
+
+class RelatedFields(ModelFieldNameMixin, related_fields_index.RelatedFields):
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+    def generate_fields(
+        self,
+        cls,
+        *args,
+        configuration_model: Optional[Type["Indexed"]] = None,
+        **kwargs,
+    ) -> list[BaseField]:
+        if configuration_model:
+            self.configuration_model = configuration_model
+
+        if self.configuration_model:
+            if "configuration_model" not in self.related_fields_kwargs:
+                self.related_fields_kwargs["configuration_model"] = (
+                    self.configuration_model
+                )
+
+        return super().generate_fields(cls, *args, **kwargs)
+
+
+class IndexedField(related_fields_index.IndexedField):
+    search_field_class = SearchField
+    autocomplete_field_class = AutocompleteField
+    filter_field_class = FilterField
+
+    def __init__(
+        self,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.configuration_model = None
+
+    def generate_fields(
+        self,
+        cls,
+        *args,
+        configuration_model: Optional[Type["Indexed"]] = None,
+        **kwargs,
+    ):
+        if configuration_model:
+            self.configuration_model = configuration_model
+
+        if self.configuration_model:
+            if "configuration_model" not in self.search_kwargs:
+                self.search_kwargs["configuration_model"] = self.configuration_model
+            if "configuration_model" not in self.autocomplete_kwargs:
+                self.autocomplete_kwargs["configuration_model"] = (
+                    self.configuration_model
+                )
+            if "configuration_model" not in self.filter_kwargs:
+                self.filter_kwargs["configuration_model"] = self.configuration_model
+
+        return super().generate_fields(cls, *args, **kwargs)
 
 
 def class_is_indexed(cls):
@@ -35,7 +136,7 @@ class Indexed(
     function_score_index.Indexed,
     related_fields_index.Indexed,
     model_field_name_index.Indexed,
-    index.Indexed,
+    # index.Indexed,
 ):
     indexed_fields = []
 
@@ -138,3 +239,24 @@ def get_indexed_models() -> list[Type[Indexed]]:
         if issubclass(model, index.Indexed) and not model._meta.abstract
         # and model.search_fields
     ]
+
+
+class ScoreFunction(function_score_index.ScoreFunction):
+    configuration_model: Optional[models.Model] = None
+
+    def get_score_name(self):
+        if not self.configuration_model:
+            raise AttributeError(
+                "The configuration_model attribute must be set on the "
+                "ScoreFunction instance to use it."
+            )
+        score_name = super().get_score_name()
+        if self.configuration_model != self.configuration_model.get_root_index_model():
+            score_name = (
+                self.configuration_model._meta.app_label
+                + "_"
+                + self.configuration_model.__name__.lower()
+                + "__"
+                + score_name
+            )
+        return score_name

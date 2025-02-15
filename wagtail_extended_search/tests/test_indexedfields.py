@@ -12,11 +12,11 @@ from wagtail_extended_search.index import (
     FilterField,
     IndexedField,
     ModelFieldNameMixin,
-    MultiQueryIndexedField,
     RelatedFields,
     SearchField,
     get_indexed_field_name,
 )
+from wagtail_extended_search.layers.multi_query import index as multi_query_index
 from wagtail_extended_search.tests.testing_classes import MixedIn
 from wagtail_extended_search.types import AnalysisType
 
@@ -668,7 +668,7 @@ class TestIndexedField:
 
 class TestMultiQueryIndexedField:
     def test_init_params_accepted_defaults_and_all_saved(self):
-        field = MultiQueryIndexedField("foo")
+        field = multi_query_index.IndexedField("foo")
         assert field.field_name == "foo"
         assert field.model_field_name == field.field_name
         assert field.boost == 1.0
@@ -679,7 +679,7 @@ class TestMultiQueryIndexedField:
         assert not field.tokenized
         assert not field.explicit
 
-        field = MultiQueryIndexedField(
+        field = multi_query_index.IndexedField(
             "foo",
             explicit=True,
             tokenized=True,
@@ -693,7 +693,7 @@ class TestMultiQueryIndexedField:
         assert field.fuzzy
 
     def test_init_params_set_search_param_when_needed(self):
-        field = MultiQueryIndexedField("foo", tokenized=True)
+        field = multi_query_index.IndexedField("foo", tokenized=True)
         assert field.search
         assert not field.autocomplete
         assert not field.filter
@@ -701,7 +701,7 @@ class TestMultiQueryIndexedField:
         assert field.tokenized
         assert not field.fuzzy
 
-        field = MultiQueryIndexedField("foo", explicit=True)
+        field = multi_query_index.IndexedField("foo", explicit=True)
         assert field.search
         assert not field.autocomplete
         assert not field.filter
@@ -709,7 +709,7 @@ class TestMultiQueryIndexedField:
         assert not field.tokenized
         assert not field.fuzzy
 
-        field = MultiQueryIndexedField("foo", fuzzy=True)
+        field = multi_query_index.IndexedField("foo", fuzzy=True)
         assert field.search
         assert not field.autocomplete
         assert not field.filter
@@ -718,32 +718,32 @@ class TestMultiQueryIndexedField:
         assert field.fuzzy
 
     def test_get_search_analyzers(self):
-        field = MultiQueryIndexedField("foo")
+        field = multi_query_index.IndexedField("foo")
         assert field.get_search_analyzers() == set()
-        field = MultiQueryIndexedField("foo", tokenized=True)
+        field = multi_query_index.IndexedField("foo", tokenized=True)
         assert field.get_search_analyzers() == {AnalysisType.TOKENIZED}
-        field = MultiQueryIndexedField("foo", explicit=True)
+        field = multi_query_index.IndexedField("foo", explicit=True)
         assert field.get_search_analyzers() == {AnalysisType.EXPLICIT}
-        field = MultiQueryIndexedField("foo", search=True)
+        field = multi_query_index.IndexedField("foo", search=True)
         assert field.get_search_analyzers() == {AnalysisType.TOKENIZED}
-        field = MultiQueryIndexedField("foo", search=True, explicit=True)
+        field = multi_query_index.IndexedField("foo", search=True, explicit=True)
         assert field.get_search_analyzers() == {AnalysisType.EXPLICIT}
-        field = MultiQueryIndexedField("foo", search=True, tokenized=True)
+        field = multi_query_index.IndexedField("foo", search=True, tokenized=True)
         assert field.get_search_analyzers() == {AnalysisType.TOKENIZED}
-        field = MultiQueryIndexedField("foo", explicit=True, tokenized=True)
+        field = multi_query_index.IndexedField("foo", explicit=True, tokenized=True)
         assert field.get_search_analyzers() == {
             AnalysisType.EXPLICIT,
             AnalysisType.TOKENIZED,
         }
 
     def test_get_autocomplete_analyzers(self):
-        field = MultiQueryIndexedField("foo", autocomplete=False)
+        field = multi_query_index.IndexedField("foo", autocomplete=False)
         assert field.get_autocomplete_analyzers() == set()
         field.autocomplete = True
         assert field.get_autocomplete_analyzers() == {AnalysisType.NGRAM}
 
     def test_get_filter_analyzers(self):
-        field = MultiQueryIndexedField("foo", filter=False)
+        field = multi_query_index.IndexedField("foo", filter=False)
         assert field.get_filter_analyzers() == set()
         field.filter = True
         assert field.get_filter_analyzers() == {AnalysisType.FILTER}
@@ -754,12 +754,12 @@ class TestMultiQueryIndexedField:
             return_value="--field-name--",
         )
         mock_analyzers = mocker.patch(
-            "wagtail_extended_search.index.MultiQueryIndexedField.get_search_analyzers",
+            "wagtail_extended_search.layers.multi_query.index.IndexedField.get_search_analyzers",
             return_value=[],
         )
 
         model = mocker.Mock()
-        field = MultiQueryIndexedField("foo")
+        field = multi_query_index.IndexedField("foo")
         assert field.get_search_field_variants(model) == []
         mock_analyzers.assert_called_once_with()
         mock_get_name.assert_not_called()
@@ -834,7 +834,7 @@ class TestDWIndexedField:
 
     def test_get_search_analyzers(self, mocker):
         mocker.patch(
-            "wagtail_extended_search.index.MultiQueryIndexedField.get_search_analyzers",
+            "wagtail_extended_search.layers.multi_query.index.IndexedField.get_search_analyzers",
             return_value=set(),
         )
         field = DWIndexedField("foo", keyword=False)

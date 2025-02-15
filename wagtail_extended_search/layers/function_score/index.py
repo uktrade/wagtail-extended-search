@@ -3,12 +3,11 @@ from typing import Optional
 from django.db import models
 from wagtail.search import index
 
-from wagtail_extended_search.layers.model_field_name.index import BaseField, FilterField
+from wagtail_extended_search.layers.related_fields.index import BaseField, FilterField
 
 
 class ScoreFunction:
     SUPPORTED_FUNCTIONS = ["script_score", "gauss", "exp", "linear"]
-    configuration_model: Optional[models.Model] = None
 
     def __init__(self, function_name, **kwargs) -> None:
         if function_name not in self.SUPPORTED_FUNCTIONS:
@@ -69,21 +68,7 @@ class ScoreFunction:
                 self.params["_field_name_"]["origin"] = self.origin
 
     def get_score_name(self):
-        if not self.configuration_model:
-            raise AttributeError(
-                "The configuration_model attribute must be set on the "
-                "ScoreFunction instance to use it."
-            )
-        score_name = f"{self.field_name}_scorefunction"
-        if self.configuration_model != self.configuration_model.get_root_index_model():
-            score_name = (
-                self.configuration_model._meta.app_label
-                + "_"
-                + self.configuration_model.__name__.lower()
-                + "__"
-                + score_name
-            )
-        return score_name
+        return f"{self.field_name}_scorefunction"
 
     def generate_fields(
         self,

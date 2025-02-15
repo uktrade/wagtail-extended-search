@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Optional, Type
+from typing import Optional
 
 from wagtail_extended_search.layers.model_field_name.index import (
     AutocompleteField,
@@ -7,11 +7,12 @@ from wagtail_extended_search.layers.model_field_name.index import (
     SearchField,
 )
 
-if TYPE_CHECKING:
-    from wagtail_extended_search.index import Indexed
-
 
 class IndexedField(BaseField):
+    search_field_class = SearchField
+    autocomplete_field_class = AutocompleteField
+    filter_field_class = FilterField
+
     def __init__(
         self,
         *args,
@@ -39,14 +40,7 @@ class IndexedField(BaseField):
     def generate_fields(
         self,
         cls,
-        parent_field: Optional[BaseField] = None,
-        configuration_model: Optional[Type["Indexed"]] = None,
     ) -> list[BaseField]:
-        if parent_field:
-            self.is_relation_of(parent_field)
-        if configuration_model:
-            self.configuration_model = configuration_model
-
         generated_fields = []
 
         if self.search:
@@ -70,13 +64,7 @@ class IndexedField(BaseField):
             if "boost" not in kwargs:
                 kwargs["boost"] = self.boost
 
-            if "parent_field" not in kwargs:
-                kwargs["parent_field"] = self.parent_field
-
-            if "configuration_model" not in kwargs:
-                kwargs["configuration_model"] = self.configuration_model
-
-            generated_fields.append(SearchField(*variant_args, **kwargs))
+            generated_fields.append(self.search_field_class(*variant_args, **kwargs))
         return generated_fields
 
     def generate_autocomplete_fields(self, cls) -> list[AutocompleteField]:
@@ -88,13 +76,9 @@ class IndexedField(BaseField):
             if "model_field_name" not in kwargs:
                 kwargs["model_field_name"] = self.model_field_name
 
-            if "parent_field" not in kwargs:
-                kwargs["parent_field"] = self.parent_field
-
-            if "configuration_model" not in kwargs:
-                kwargs["configuration_model"] = self.configuration_model
-
-            generated_fields.append(AutocompleteField(*variant_args, **kwargs))
+            generated_fields.append(
+                self.autocomplete_field_class(*variant_args, **kwargs)
+            )
         return generated_fields
 
     def generate_filter_fields(self, cls) -> list[FilterField]:
@@ -106,13 +90,7 @@ class IndexedField(BaseField):
             if "model_field_name" not in kwargs:
                 kwargs["model_field_name"] = self.model_field_name
 
-            if "parent_field" not in kwargs:
-                kwargs["parent_field"] = self.parent_field
-
-            if "configuration_model" not in kwargs:
-                kwargs["configuration_model"] = self.configuration_model
-
-            generated_fields.append(FilterField(*variant_args, **kwargs))
+            generated_fields.append(self.filter_field_class(*variant_args, **kwargs))
         return generated_fields
 
     def get_search_field_variants(self, cls) -> list[tuple[tuple, dict]]:

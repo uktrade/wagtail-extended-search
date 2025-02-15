@@ -1,12 +1,9 @@
 # type: ignore  (type checking is unhappy about the mixin referencing fields it doesnt define)
 import logging
-from typing import Type
-
-from django.apps import apps
-from wagtail.search import index
 
 from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
-from wagtail_extended_search.layers.multi_query.index import MultiQueryIndexedField
+from wagtail_extended_search.layers.multi_query import index as multi_query_index
+from wagtail_extended_search.layers.related_fields import index as related_fields_index
 from wagtail_extended_search.types import AnalysisType
 
 logger = logging.getLogger(__name__)
@@ -20,18 +17,6 @@ logger = logging.getLogger(__name__)
 class Indexed(indexed_fields_index.Indexed): ...
 
 
-def get_indexed_models() -> list[Type[Indexed]]:
-    """
-    Overrides wagtail.search.index.get_indexed_models
-    """
-    return [
-        model
-        for model in apps.get_models()
-        if issubclass(model, index.Indexed) and not model._meta.abstract
-        # and model.search_fields
-    ]
-
-
 ##################################
 # END OF EXTRAS
 ##################################
@@ -42,7 +27,7 @@ def get_indexed_models() -> list[Type[Indexed]]:
 #############################
 
 
-class DWIndexedField(MultiQueryIndexedField):
+class DWIndexedField(multi_query_index.IndexedField, indexed_fields_index.IndexedField):
     def __init__(
         self,
         *args,

@@ -12,17 +12,12 @@ from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 from wagtail_extended_search import settings as search_settings
 from wagtail_extended_search.index import Indexed, get_indexed_field_name
 from wagtail_extended_search.layers.filtered.query import Filtered
-from wagtail_extended_search.layers.function_score.index import ScoreFunction
 from wagtail_extended_search.layers.function_score.query import FunctionScore
 from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
-from wagtail_extended_search.layers.model_field_name import (
-    index as model_field_name_index,
-)
-from wagtail_extended_search.layers.model_field_name.index import SearchField
 from wagtail_extended_search.layers.nested.query import Nested
 from wagtail_extended_search.layers.one_to_many.index import IndexedField
 from wagtail_extended_search.layers.only_fields.query import OnlyFields
-from wagtail_extended_search.layers.related_fields.index import RelatedFields
+from wagtail_extended_search.layers.related_fields import index as related_fields_index
 from wagtail_extended_search.types import AnalysisType, SearchQueryType
 
 logger = logging.getLogger(__name__)
@@ -127,7 +122,7 @@ class QueryBuilder:
         analysis_type: AnalysisType,
         field: index.BaseField,
     ):
-        if isinstance(field, model_field_name_index.BaseField):
+        if isinstance(field, indexed_fields_index.BaseField):
             base_field_name = field.get_full_model_field_name()
 
         boost = cls._get_boost_for_field_querytype_analysistype(
@@ -206,7 +201,7 @@ class QueryBuilder:
         if isinstance(field, IndexedField):
             return cls._build_search_query_for_indexfield(model_class, field, None)
 
-        if isinstance(field, RelatedFields):
+        if isinstance(field, indexed_fields_index.RelatedFields):
             internal_subquery = None
             for related_field in field.fields:
                 internal_subquery = cls._combine_queries(
@@ -230,7 +225,7 @@ class QueryBuilder:
                 None,
             )
 
-        if isinstance(field, SearchField):
+        if isinstance(field, related_fields_index.SearchField):
             return cls._build_search_query_for_searchfield(
                 model_class,
                 field,
@@ -275,7 +270,7 @@ class CustomQueryBuilder(QueryBuilder):
         query = None
         score_configurations = []
         for field in model_class.get_indexed_fields():
-            if isinstance(field, ScoreFunction):
+            if isinstance(field, indexed_fields_index.ScoreFunction):
                 score_configurations.append(field)
             else:
                 query_elements = cls._build_search_query(model_class, field)
