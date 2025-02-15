@@ -432,7 +432,7 @@ class TestFilteredSearchQueryCompiler:
         compiler._compile_query(query, field, 443)
         mock_compile_filtered.assert_not_called()
         query = Filtered(
-            query, filters=[("content_type", "contains", "content.content_page")]
+            query, filters=[("content_type_id", "in", ["content.content_page"])]
         )
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
         compiler._compile_query(query, field, 443)
@@ -445,7 +445,7 @@ class TestFilteredSearchQueryCompiler:
         )
         query = Filtered(
             Phrase("quid"),
-            filters=[("content_type", "contains", "content.content_page")],
+            filters=[("content_type_id", "in", ["content.content_page"])],
         )
         field = Field("foo")
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
@@ -460,8 +460,8 @@ class TestFilteredSearchQueryCompiler:
         query = Filtered(
             Phrase("quid"),
             filters=[
-                ("content_type", "contains", "content.content_page"),
-                ("another_field", "excludes", "anything"),
+                ("content_type_id", "in", ["content.content_page"]),
+                ("another_field", "notin", ["anything"]),
             ],
         )
         result = compiler._compile_filtered_query(query, [field], boost=1.0)
@@ -479,10 +479,10 @@ class TestFilteredSearchQueryCompiler:
         query = PlainText("quid")
         compiler = FilteredSearchQueryCompiler(Page.objects.all(), query)
         parent_compiler = ExtendedSearchQueryCompiler(Page.objects.all(), query)
-        result = compiler._process_lookup(field, "contains", 334)
+        result = compiler._process_lookup(field, "in", 334)
         mock_parent.assert_not_called()
         assert result == {"match": {"foobar": 334}}
-        result = compiler._process_lookup(field, "excludes", "bar")
+        result = compiler._process_lookup(field, "notin", "bar")
         mock_parent.assert_not_called()
         assert result == {"bool": {"mustNot": {"terms": {"foobar": "bar"}}}}
         result = compiler._process_lookup(field, "gte", "bar")
@@ -504,9 +504,9 @@ class TestFilteredSearchMapping:
         mock_parent.assert_called_once()
 
         mock_parent.reset_mock()
-        result = map.get_field_column_name("content_type")
+        result = map.get_field_column_name("content_type_id")
         mock_parent.assert_not_called()
-        assert result == "content_type"
+        assert result == "content_type_id"
 
 
 class TestCustomSearchBackend:

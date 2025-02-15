@@ -3,26 +3,21 @@ import logging
 from typing import Optional, Type
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.db import models
 from wagtail.search import index
 from wagtail.search.query import Boost, Fuzzy, Phrase, PlainText, SearchQuery
 
 from wagtail_extended_search import settings as search_settings
-from wagtail_extended_search.index import (
-    BaseField,
-    Indexed,
-    get_indexed_field_name,
-    get_indexed_models,
-)
+from wagtail_extended_search.index import Indexed, get_indexed_field_name
 from wagtail_extended_search.layers.filtered.query import Filtered
-from wagtail_extended_search.layers.function_score.index import ScoreFunction
 from wagtail_extended_search.layers.function_score.query import FunctionScore
-from wagtail_extended_search.layers.model_field_name.index import SearchField
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 from wagtail_extended_search.layers.nested.query import Nested
 from wagtail_extended_search.layers.one_to_many.index import IndexedField
 from wagtail_extended_search.layers.only_fields.query import OnlyFields
-from wagtail_extended_search.layers.related_fields.index import RelatedFields
+from wagtail_extended_search.layers.related_fields import index as related_fields_index
 from wagtail_extended_search.types import AnalysisType, SearchQueryType
 
 logger = logging.getLogger(__name__)
@@ -127,7 +122,7 @@ class QueryBuilder:
         analysis_type: AnalysisType,
         field: index.BaseField,
     ):
-        if isinstance(field, BaseField):
+        if isinstance(field, indexed_fields_index.BaseField):
             base_field_name = field.get_full_model_field_name()
 
         boost = cls._get_boost_for_field_querytype_analysistype(
@@ -206,7 +201,7 @@ class QueryBuilder:
         if isinstance(field, IndexedField):
             return cls._build_search_query_for_indexfield(model_class, field, None)
 
-        if isinstance(field, RelatedFields):
+        if isinstance(field, indexed_fields_index.RelatedFields):
             internal_subquery = None
             for related_field in field.fields:
                 internal_subquery = cls._combine_queries(
@@ -230,7 +225,7 @@ class QueryBuilder:
                 None,
             )
 
-        if isinstance(field, SearchField):
+        if isinstance(field, related_fields_index.SearchField):
             return cls._build_search_query_for_searchfield(
                 model_class,
                 field,
@@ -275,7 +270,7 @@ class CustomQueryBuilder(QueryBuilder):
         query = None
         score_configurations = []
         for field in model_class.get_indexed_fields():
-            if isinstance(field, ScoreFunction):
+            if isinstance(field, indexed_fields_index.ScoreFunction):
                 score_configurations.append(field)
             else:
                 query_elements = cls._build_search_query(model_class, field)
@@ -352,28 +347,26 @@ class CustomQueryBuilder(QueryBuilder):
         )
         # build full query for each extended model
         queries = []
-        queried_content_types = []
+        sub_model_contenttype_ids = []
         for sub_model_class in extended_models:
             # Filter so it only applies to "docs with that model anywhere in the
             # contenttypes list".
 
-            sub_model_contenttype = (
-                f"{sub_model_class._meta.app_label}.{sub_model_class.__name__}"
-            )
+            sub_model_contenttype = ContentType.objects.get_for_model(sub_model_class)
 
             subquery = cls.build_query_for_model(sub_model_class)
             query = Filtered(
                 subquery=subquery,
                 filters=[
                     (
-                        "content_type",
-                        "contains",
-                        sub_model_contenttype,
+                        "content_type_id",
+                        "in",
+                        [sub_model_contenttype.id],
                     ),
                 ],
             )
             queries.append(query)
-            queried_content_types.append(sub_model_contenttype)
+            sub_model_contenttype_ids.append(sub_model_contenttype.id)
 
         # Build query for root model passed in to method, filter to exclude docs
         # with contenttypes matching any of the already queried models.
@@ -383,9 +376,9 @@ class CustomQueryBuilder(QueryBuilder):
                 subquery=subquery,
                 filters=[
                     (
-                        "content_type",
-                        "excludes",
-                        queried_content_types,
+                        "content_type_id",
+                        "notin",
+                        sub_model_contenttype_ids,
                     ),
                 ],
             )
@@ -414,7 +407,7 @@ class CustomQueryBuilder(QueryBuilder):
         index fields.
         """
         extended_model_classes = []
-        indexed_models = get_indexed_models()
+        indexed_models = indexed_fields_index.get_indexed_models()
         for indexed_model in indexed_models:
             if (
                 indexed_model != model_class

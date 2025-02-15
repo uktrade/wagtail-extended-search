@@ -8,7 +8,9 @@ class WagtailExtendedSearchConfig(AppConfig):
     def ready(self):
         import wagtail_extended_search.signals  # noqa
         from wagtail_extended_search import query_builder, settings
-        from wagtail_extended_search.index import get_indexed_models
+        from wagtail_extended_search.layers.indexed_fields import (
+            index as indexed_fields_index,
+        )
 
         settings.settings_singleton.initialise_field_dict()
         settings.settings_singleton.initialise_env_dict()
@@ -22,6 +24,6 @@ class WagtailExtendedSearchConfig(AppConfig):
             settings.wagtail_extended_search_settings
         )
 
-        for model_class in get_indexed_models():
+        for model_class in indexed_fields_index.get_indexed_models():
             if hasattr(model_class, "indexed_fields") and model_class.indexed_fields:
                 query_builder.CustomQueryBuilder.build_search_query(model_class, True)

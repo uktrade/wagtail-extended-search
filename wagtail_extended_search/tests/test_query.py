@@ -119,7 +119,7 @@ class TestFiltered:
         fi = Filtered(
             PlainText("foo"),
             [
-                ("bar", "baz", "foobar"),
+                ("bar", "baz", ["foobar"]),
             ],
         )
 
@@ -134,7 +134,7 @@ class TestFiltered:
                 Filtered(
                     PlainText("foo"),
                     [
-                        ("bar", "baz", "foobar"),
+                        ("bar", "baz", ["foobar"]),
                     ],
                 )
             )
@@ -145,7 +145,7 @@ class TestFiltered:
                 Filtered(
                     PlainText("foo"),
                     [
-                        ("bar", "baz", "foobar"),
+                        ("bar", "baz", ["foobar"]),
                     ],
                 )
             )

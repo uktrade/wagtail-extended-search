@@ -229,13 +229,13 @@ class TestCustomQueryBuilder:
                     Filtered(
                         subquery=PlainText("foo"),
                         filters=[
-                            ("content_type", "excludes", ["mock.extended_model"]),
+                            ("content_type_id", "notin", ["mock.extended_model"]),
                         ],
                     ),
                     Filtered(
                         subquery=PlainText("foo"),
                         filters=[
-                            ("content_type", "contains", "mock.extended_model"),
+                            ("content_type_id", "in", ["mock.extended_model"]),
                         ],
                     ),
                 ]

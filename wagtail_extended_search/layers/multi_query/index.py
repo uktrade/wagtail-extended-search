@@ -2,7 +2,7 @@ from wagtail_extended_search.layers.one_to_many.index import IndexedField
 from wagtail_extended_search.types import AnalysisType
 
 
-class MultiQueryIndexedField(IndexedField):
+class IndexedField(IndexedField):
     def __init__(
         self,
         *args,

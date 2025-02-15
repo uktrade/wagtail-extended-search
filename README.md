@@ -95,11 +95,15 @@ Extends the `IndexField` concept so that we can configure related fields in a si
 
 Fixes the Elastic search backend to respect the boosts that have been set on the `Indexed.search_fields` list of `SearchField` objects.
 
+Wagtail PR: https://github.com/uktrade/wagtail/pull/4 (draft)
+
 #### Filtered
 
 `wagtail_extended_search.layers.filtered`
 
 Adds the ability to only run a query against a subset of the index. For example, only running the query against News Pages instead of all Pages.
+
+Wagtail PR: https://github.com/uktrade/wagtail/pull/5 (draft)
 
 #### Function Score
 

@@ -8,9 +8,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.db.utils import ProgrammingError
 
 from wagtail_extended_search import models
-from wagtail_extended_search.index import BaseField, get_indexed_models
-from wagtail_extended_search.layers.model_field_name.index import SearchField
-from wagtail_extended_search.layers.related_fields.index import RelatedFields
+from wagtail_extended_search.layers.indexed_fields import index as indexed_fields_index
 
 env_file_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
@@ -214,16 +212,16 @@ class SearchSettings(NestedChainMap):
 
     def _get_all_indexed_fields(self):
         fields = {}
-        for model_cls in get_indexed_models():
+        for model_cls in indexed_fields_index.get_indexed_models():
             for search_field in model_cls.get_search_fields():
-                if isinstance(search_field, SearchField) or isinstance(
-                    search_field, RelatedFields
-                ):
+                if isinstance(
+                    search_field, indexed_fields_index.SearchField
+                ) or isinstance(search_field, indexed_fields_index.RelatedFields):
                     definition_cls = search_field.get_definition_model(model_cls)
                     if definition_cls not in fields:
                         fields[definition_cls] = set()
 
-                    if isinstance(search_field, RelatedFields):
+                    if isinstance(search_field, indexed_fields_index.RelatedFields):
                         for ff in search_field.fields:
                             fields[definition_cls].add(ff)
                     else:
@@ -312,6 +310,6 @@ wagtail_extended_search_settings = settings_singleton.to_dict()
 
 def get_settings_field_key(model_class, field) -> str:
     full_field_name = field.field_name
-    if isinstance(field, BaseField):
+    if isinstance(field, indexed_fields_index.BaseField):
         full_field_name = field.get_full_model_field_name()
     return f"{model_class._meta.app_label}.{model_class._meta.model_name}.{full_field_name}"
